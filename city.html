@@ -9,8 +9,41 @@
         </style>
         <script src="lib/three.min.js"></script>
         <script src="lib/OrbitControls.js"></script>
+        <script src="lib/OBJLoader.js"></script>
+
+        <link rel="stylesheet" href="./misc/navBar.css">
+
     </head>
     <body>
-        <script src="city.mjs" type="module"></script>
+
+        <div class="topnav">
+            <a id="#sceneSave">Save scene</a>
+            <a id="#sceneLoad">Load scene</a>
+            <a id="#heatMapToggle">Toggle heatmap</a>
+
+            <div class="dropdown">
+                <div id="cancelBuildingBtn" onclick="javascript: buildingCancel(); addBuildingPassive()" class="dropbtn"> Add building
+                </div>
+                <div class="dropdown-content">
+                    <a id="building1" onclick="javascript: buildingFarmHouse(); addBuildingActive();">Farmhouse</a>
+                    <a id="building1" onclick="javascript: buildingToggle(); addBuildingActive();">Building 1</a>
+                    <a id="building1" onclick="javascript: buildingToggle(); addBuildingActive();">Building 1</a>
+                </div>
+            </div>
+            
+            <script>
+                function addBuildingActive() {
+                  var x = document.getElementById("cancelBuildingBtn");
+                  x.innerHTML = "Cancel";
+                }
+                function addBuildingPassive() {
+                  var x = document.getElementById("cancelBuildingBtn");
+                  x.innerHTML = "Add building";
+                }
+            </script>
+
+
+        <script src="city.js" type="text/javascript"></script>
+        </div>
     </body>
 </html>

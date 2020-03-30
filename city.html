@@ -25,7 +25,6 @@
             <form id='formid' method="POST" enctype="multipart/form-data"> 
                 <input id='fileid' type='file' onchange="handleFile(event);" hidden/>
             </form> 
-            <a id="#heatMapToggle">Toggle heatmap</a>
 
             <div class="dropdown">
                 <div id="cancelBuildingBtn" onclick="javascript: buildingCancel(); addBuildingPassive()" class="dropbtn"> Add building
@@ -35,9 +34,20 @@
                     <a onclick="javascript: cityBuilding(); addBuildingActive();">City building</a>
                 </div>
             </div>
+            <a id="deleteBtn" onclick="javascript: buildingDelete(); doDeleteActive()">Delete building</a>
 
-            <a id="deleteBtn" onclick="javascript: buildingDelete(); doDeleteActive()">Delete</a>
-                    
+            
+            <a id="landmark" onclick=" javascript: toggleLandmark(); handleLandmark();">Select landmark</a>
+
+            <a id="landvis" onclick=" javascript: landmarkVis();">Landmark visability</a>
+            <a id="skyVis" onclick=" javascript: toggleSkyVis(); handleSkyVis();">Sky visability</a>
+                  
+            <a id="landvisClear" onclick=" javascript: removeLine();">Clear lines</a>
+
+            <a id="addBars" onclick=" javascript: toggleBars(); handleBars();">Add bars</a>
+            <a id="stopBars" onclick=" javascript: removeBars(); ">Remove bars</a>
+
+            
             <script>
                 function addBuildingActive() {
                   var x = document.getElementById("cancelBuildingBtn");
@@ -49,10 +59,10 @@
                 }
                 function doDeleteActive() {
                     var x = document.getElementById("deleteBtn");
-                    if("Delete" === x.innerHTML) {
+                    if("Delete building" === x.innerHTML) {
                         x.innerHTML = "Cancel";
                     } else {
-                        x.innerHTML = "Delete";
+                        x.innerHTML = "Delete building";
                     }
                 }
                 function setup() {
@@ -69,6 +79,31 @@
                         reader.onload = function (evt) {
                             sceneLoad(evt.target.result);
                         }
+                    }
+                }
+                function handleSkyVis() {
+                    var x = document.getElementById("skyVis");
+                    if("Sky visability" === x.innerHTML) {
+                        x.innerHTML = "Cancel";
+                    } else {
+                        x.innerHTML = "Sky visability";
+                    }
+                }
+                function handleLandmark() {
+                    var x = document.getElementById("landmark");
+                    if("Select landmark" === x.innerHTML) {
+                        x.innerHTML = "Confirm";
+                    } else {
+                        x.innerHTML = "Select landmark";
+                        indicateLandmark();
+                    }
+                }
+                function handleBars() {
+                    var x = document.getElementById("addBars");
+                    if("Add bars" === x.innerHTML) {
+                        x.innerHTML = "Cancel";
+                    } else {
+                        x.innerHTML = "Add bars";
                     }
                 }
                 </script>

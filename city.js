@@ -2,7 +2,9 @@
 var scene = new THREE.Scene();
 var sceneCenter = new THREE.Vector3(0.0, 0.0, 0.0);
 var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 10000 );
-camera.position.z = 200;
+camera.position.x = 500;
+camera.position.y = 500;
+camera.position.z = 500;
 
 // Create a renderer
 var renderer = new THREE.WebGLRenderer();
@@ -19,24 +21,29 @@ var texture;
 var mouse = new THREE.Vector3();
 
 // Add directional light source to light the scene
-var sun = new THREE.DirectionalLight('#FDFEFE', 1);
-sun.position.set(0.0, 700.0, 0.0);
-sun.lookAt(sceneCenter);
-sun.name = "sun";
+var sun = null;
 var sunSpeed = 1;   // degree/s
 var phi = 45.0;      // Horizontal angle
 var theta = 45.0;    // Vertical angle
-scene.add(sun);
-
-// Adds ambient light to the scene
-scene.add(new THREE.AmbientLight(0x404040))
+addSun();
 
 loadObject();
 
-document.addEventListener('mousedown', onDocumentMouseDown);
 
+
+var bars = {
+    active: false,
+    add: false
+}
+
+document.addEventListener('mousedown', onDocumentMouseDown);
+/**
+ * var axesHelper = new THREE.AxesHelper( 500 );
+ * scene.add( axesHelper );
+ */
 controls.update();
 // Animates the scene.
+var frame = 0;
 let then = 0;
 function animate(now=0) {
     requestAnimationFrame( animate );
@@ -50,6 +57,12 @@ function animate(now=0) {
 
     controls.update();
     renderer.render( scene, camera);
+
+    if(bars.active && frame%100 == 0) {
+        updateBars();
+    }
+    frame += 1;
+    scene.updateMatrixWorld();
 }
 animate();
 
@@ -106,6 +119,8 @@ function loadModel() {
     obj.position.x = addBuilding.x;
     obj.position.y = addBuilding.y;
     obj.position.z = addBuilding.z;
+    console.log(obj);
+    obj.children[0].geometry.computeBoundingBox();
     scene.add( obj );
 }
 
@@ -115,7 +130,7 @@ var addBuilding = {
     z:0,
     scale:1,
     objPath:'./models/environment.obj', 
-    texPath:'./models/envTex.png',
+    texPath:'./models/envTex.jpg',
     active:false
 };
 
@@ -144,14 +159,23 @@ function onDocumentMouseDown( event ) {
             o.parent.remove(o)
             o.geometry.dispose();
             o.material.dispose();
+        } else if(skyVis) {
+            findSkyVis(intersections[0].point);
+        } else if(landmark.active) {
+            if ("building"===intersections[0].object.parent.name) {
+                landmark.uuid = intersections[0].object.parent.uuid;
+            }
+        } else if(bars.add) {
+            var height = findSkyVis(intersections[0].point, false, false);
+            addBars(intersections[0].point, height);
         }
     }
-    console.log(scene);
+    //console.log(scene);
 }
 
 
 
-function loadObject(objPath='./models/environment.obj', texPath='./models/envTex.png', building=false) {
+function loadObject(objPath='./models/environment.obj', texPath='./models/envTex.jpg', building=false) {
     var manager = new THREE.LoadingManager( loadModel );
     
     manager.onProgress = function ( item, loaded, total ) {
@@ -212,13 +236,13 @@ function buildingDelete() {
 }
 
 function sceneSave() {
+    console.log(scene);
     // Instantiate a exporter
     var exporter = new THREE.GLTFExporter();
 
     // Parse the input and generate the glTF output
     exporter.parse( scene, function ( gltf ) {
-        console.log( gltf );
-        download(gltf, 'json.txt', 'text/plain');
+        download(gltf, 'scene.txt', 'text/plain');
     } );
 }
 
@@ -232,19 +256,218 @@ function download(content, fileName, contentType) {
 }
 
 function sceneLoad(file) {
-    console.log(file);
+    for(var i=scene.children.length - 1; i>=0; i--){
+        if ("building"===scene.children[i].name){
+            scene.remove(scene.children[i]);
+        }
+    }
+
     var sceneLoader = new THREE.GLTFLoader();
 
-    sceneLoader.parse(file,"joke", function (o) {
-        console.log(scene);
+    sceneLoader.parse(file,"./models/houses", function (o) {
+        var children = o.scene.children;
         console.log(o);
-
-        var newObj = o.scenes[0].children;
-
-        for (c in newObj) {
-            if ("building" === newObj[c].name) {
-                scene.add(newObj[c]);
+        for (i in children) {
+            if ("building" === children[i].name) 
+            {
+                console.log(children[i]);
+                scene.add(children[i]);
             }
         }
     });
+}
+
+var skyVis = false;
+function toggleSkyVis() {
+    if (skyVis) {
+        skyVis = false;
+    } else {
+        skyVis = true;
+    }
+}
+
+
+function findSkyVis(point, msg=true, line=true, vert=360, hor=90) {
+    // Save time
+    var t0 = performance.now();
+    var sScore = 0;
+    var nRays = 0;
+
+    sScore = 0;
+    for (i=0; i < hor; i+=30) {        // Horizontal angle
+        for (j=0; j < vert; j+=90) {      // Vertical angle
+            var x = Math.sin(i*Math.PI/180) * Math.cos(j*Math.PI/180);
+            var y = Math.sin(i*Math.PI/180) * Math.sin(j*Math.PI/180);;
+            var z = Math.cos(i*Math.PI/180);
+
+            var direction = new THREE.Vector3(x, z, y);    // Ray direction
+            var origin = new THREE.Vector3(point.x, point.y, point.z);       // Clicked pos
+            var ray = new THREE.Raycaster(origin, direction, 0.1, 1000);
+            nRays += 1;
+            var intersects = ray.intersectObjects(scene.children, true);
+            // Increase sScore
+            if (0 < intersects.length) {
+                if (line) {
+                    var d = origin.distanceTo(intersects[0].point);
+                    createLine(origin, direction, d);
+                }
+                sScore += 1;
+            }
+        }
+    }
+    sScore = (nRays - sScore)/(nRays);
+    if (msg) {
+        alert("sScore: " + Math.round((sScore)*100) + "%\nTime: " + Math.round(performance.now() - t0) + "ms\nRays: " + (nRays));
+    } else {
+        return sScore;
+    }
+}
+
+// Print line code is originally written by Bjørnar Longva
+let createLine = function(origin, dir, length) {
+    let o = origin.clone();
+    let goal = new THREE.Vector3();
+    goal.addVectors(o, dir.multiplyScalar(length));
+    let geometry = new THREE.Geometry();
+    geometry.vertices.push(o);
+    geometry.vertices.push(goal);
+    let material = new THREE.LineBasicMaterial({ color: 0xff0000 });
+    let line = new THREE.Line(geometry, material);
+    line.name = "line";
+    scene.add(line);
+}
+
+// Delete all lines with name line from the scene
+function removeLine() {
+    for( var i = scene.children.length - 1; i >= 0; i--) {
+        child = scene.children[i];
+        if ("line" === child.name) {
+            scene.remove(scene.children[i]);
+        }
+    }
+    renderer.render(scene, camera);
+}
+
+function addSun() {
+    sun = new THREE.DirectionalLight('#FDFEFE', 1);
+    sun.position.set(0.0, 700.0, 0.0);
+    sun.lookAt(sceneCenter);
+    sun.name = "sun";
+    scene.add(sun);
+    scene.add(new THREE.AmbientLight(0x404040));
+
+}
+
+var landmark = {
+    active: false,
+    uuid: null,
+};
+function toggleLandmark() {
+    if (landmark.active) {
+        landmark.active = false;
+    } else {
+        landmark.active = true;
+    }
+}
+
+function landmarkVis(vert=360, hor=90) {
+    if (null === landmark.uuid) {
+        alert("No landmark selected!");
+    } else {
+        var lm = scene.getObjectByProperty("uuid", landmark.uuid);
+        var point = lm.position;
+        // Save time
+        var t0 = performance.now();
+        var lScore = 0;
+        var nRays = 0;
+        var hitBuildings = [lm.uuid];
+    
+        lScore = 0;
+        for (i=0; i < hor; i+=15) {        // Horizontal angle
+            for (j=0; j < vert; j+=15) {      // Vertical angle
+                var x = Math.sin(i*Math.PI/180) * Math.cos(j*Math.PI/180);
+                var y = Math.sin(i*Math.PI/180) * Math.sin(j*Math.PI/180);;
+                var z = Math.cos(i*Math.PI/180);
+    
+                var direction = new THREE.Vector3(x, z, y);    // Ray direction
+                var origin = new THREE.Vector3(point.x, point.y, point.z);       // Clicked pos
+                var ray = new THREE.Raycaster(origin, direction, 0.1, 500);
+                nRays += 1;
+                
+                var intersects = ray.intersectObjects(scene.children, true);
+
+                // Increase lScore
+                if (1 < intersects.length) {
+                    var hit = intersects[1].object.parent;
+                    if ("building"=== hit.name && !(hitBuildings.includes(hit.uuid))) {
+                        var d = origin.distanceTo(hit.position);
+                        hitBuildings.push(hit.uuid);
+                        createLine(origin, direction, d);
+                        lScore += 1;
+                    }
+                }
+            }
+        }
+        var result = "Buildings hit: " + lScore + "\nTime: " + Math.round(performance.now() - t0) + "ms\nRays: " + (nRays);
+        console.log(result)
+        alert(result);
+    }
+}
+
+function indicateLandmark(){
+    if (null === landmark.uuid) {
+        alert("No landmark selected!");
+    } else {
+        alert("New landmark selected");
+    }
+}
+function toggleBars() {
+    if (bars.add) {
+        bars.add = false;
+    } else {
+        bars.add = true;
+    }
+}
+function removeBars() {
+    bars.active = false;
+    for (i = 0; i<scene.children.length; i++) {
+        const j = i;
+        if ("bar" === scene.children[j].name) {
+            scene.remove(scene.children[j]);
+        }
+    }
+}
+
+var barSize={
+    x: 10,
+    y: 100,
+    z: 10
+}
+
+function updateBars() {
+    for (i = 0; i<scene.children.length; i++) {
+        const j = i;
+        if ("bar" === scene.children[j].name) {
+            var height = findSkyVis(scene.children[j].position, false, false);
+            console.log(height);
+            if (.5 > height) {
+                height = .5;
+            } else if (1 < height){
+                height = 1;
+            }
+            scene.children[j].scale.y = height;
+        }
+    }
+}
+
+function addBars(coord, height) {
+    bars.active = true;
+    height = barSize.y + barSize.y*height;
+    var geometry = new THREE.BoxGeometry(barSize.x, height, barSize.z);
+    geometry.applyMatrix( new THREE.Matrix4().makeTranslation(0, barSize.y, 0 ) );
+    var material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
+    var cube = new THREE.Mesh( geometry, material );
+    cube.name="bar";
+    cube.position.set(coord.x, coord.y, coord.z);
+    scene.add( cube );
 }

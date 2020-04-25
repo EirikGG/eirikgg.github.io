@@ -27,7 +27,7 @@ var phi = 45.0;      // Horizontal angle
 var theta = 45.0;    // Vertical angle
 addSun();
 
-loadObject();
+loadEnvironment();
 
 
 
@@ -37,13 +37,15 @@ var bars = {
 }
 
 document.addEventListener('mousedown', onDocumentMouseDown);
-/**
- * var axesHelper = new THREE.AxesHelper( 500 );
- * scene.add( axesHelper );
- */
+window.addEventListener('resize', onResize, false);
+
+
+//The X axis is red. The Y axis is green. The Z axis is blue.
+//var axesHelper = new THREE.AxesHelper( 500 );
+//scene.add( axesHelper );
+
 controls.update();
 // Animates the scene.
-var frame = 0;
 let then = 0;
 function animate(now=0) {
     requestAnimationFrame( animate );
@@ -58,11 +60,7 @@ function animate(now=0) {
     controls.update();
     renderer.render( scene, camera);
 
-    if(bars.active && frame%100 == 0) {
-        updateBars();
-    }
-    frame += 1;
-    scene.updateMatrixWorld();
+    updateBars().then();
 }
 animate();
 
@@ -153,7 +151,7 @@ function onDocumentMouseDown( event ) {
         
         if (addBuilding.active) {
             loadObject(addBuilding.objPath, addBuilding.texPath, true);
-        } else if (deleteActive && "Plane_Plane_Material.001" !== intersections[0].object.name && "Plane_Plane_Material.002" !== intersections[0].object.name) {
+        } else if (deleteActive && "EXPORT_GOOGLE_SAT_WM" !== intersections[0].object.name) {
             var o = intersections[0].object.uuid;
             var o = scene.getObjectByProperty('uuid', o)
             o.parent.remove(o)
@@ -162,12 +160,13 @@ function onDocumentMouseDown( event ) {
         } else if(skyVis) {
             findSkyVis(intersections[0].point);
         } else if(landmark.active) {
-            if ("building"===intersections[0].object.parent.name) {
+            if ("building" === intersections[0].object.name){
+                landmark.uuid = intersections[0].object.uuid;
+            }else if ("building" === intersections[0].object.parent.name) {
                 landmark.uuid = intersections[0].object.parent.uuid;
             }
         } else if(bars.add) {
-            var height = findSkyVis(intersections[0].point, false, false);
-            addBars(intersections[0].point, height);
+            addBars(intersections[0].point);
         }
     }
     //console.log(scene);
@@ -175,7 +174,7 @@ function onDocumentMouseDown( event ) {
 
 
 
-function loadObject(objPath='./models/environment.obj', texPath='./models/envTex.jpg', building=false) {
+function loadObject(objPath='./models/city2.obj', texPath='./models/city2.png', building=false) {
     var manager = new THREE.LoadingManager( loadModel );
     
     manager.onProgress = function ( item, loaded, total ) {
@@ -196,10 +195,10 @@ function loadObject(objPath='./models/environment.obj', texPath='./models/envTex
         obj = object;
         if (building) {
             obj.name = "building";
+            obj.scale.y = (Math.random() + 1);
         } else {
             obj.name = "environment"
         }
-
     });
 }
 
@@ -207,14 +206,30 @@ function loadObject(objPath='./models/environment.obj', texPath='./models/envTex
 function buildingFarmHouse() {
     addBuilding.objPath='./models/houses/farmhouse.obj';
     addBuilding.texPath='./models/houses/farmhouse.jpg';
-    addBuilding.scale=1;
     addBuilding.active = true;
 }
 
 function cityBuilding() {
     addBuilding.objPath='./models/houses/city.obj';
     addBuilding.texPath='./models/houses/city.jpg';
-    addBuilding.scale=.3;
+    addBuilding.active = true;
+}
+
+function cityBuilding2() {
+    addBuilding.objPath='./models/houses/city.obj';
+    addBuilding.texPath='./models/houses/city2.jpg';
+    addBuilding.active = true;
+}
+
+function cityBuilding3() {
+    addBuilding.objPath='./models/houses/city.obj';
+    addBuilding.texPath='./models/houses/city3.jpg';
+    addBuilding.active = true;
+}
+
+function cityBuilding4() {
+    addBuilding.objPath='./models/houses/city.obj';
+    addBuilding.texPath='./models/houses/city4.jpg';
     addBuilding.active = true;
 }
 
@@ -240,10 +255,19 @@ function sceneSave() {
     // Instantiate a exporter
     var exporter = new THREE.GLTFExporter();
 
+
+
     // Parse the input and generate the glTF output
     exporter.parse( scene, function ( gltf ) {
         download(gltf, 'scene.txt', 'text/plain');
-    } );
+    }, {trs: false,
+        onlyVisible: true,
+        truncateDrawRange: true,
+        binary: false,
+        forceIndecies: false,
+        forcePowerOfTwoTextures: false,
+        embedImages: true
+    });
 }
 
 function download(content, fileName, contentType) {
@@ -287,15 +311,15 @@ function toggleSkyVis() {
 }
 
 
-function findSkyVis(point, msg=true, line=true, vert=360, hor=90) {
+function findSkyVis(point, msg=true, line=true, degreeJump=10, vert=360, hor=90) {
     // Save time
     var t0 = performance.now();
     var sScore = 0;
     var nRays = 0;
 
     sScore = 0;
-    for (i=0; i < hor; i+=30) {        // Horizontal angle
-        for (j=0; j < vert; j+=90) {      // Vertical angle
+    for (i=0; i < hor; i+=degreeJump) {        // Horizontal angle
+        for (j=0; j < vert; j+=degreeJump) {      // Vertical angle
             var x = Math.sin(i*Math.PI/180) * Math.cos(j*Math.PI/180);
             var y = Math.sin(i*Math.PI/180) * Math.sin(j*Math.PI/180);;
             var z = Math.cos(i*Math.PI/180);
@@ -349,7 +373,7 @@ function removeLine() {
 }
 
 function addSun() {
-    sun = new THREE.DirectionalLight('#FDFEFE', 1);
+    sun = new THREE.DirectionalLight('#FDFEFE', .5);
     sun.position.set(0.0, 700.0, 0.0);
     sun.lookAt(sceneCenter);
     sun.name = "sun";
@@ -370,7 +394,7 @@ function toggleLandmark() {
     }
 }
 
-function landmarkVis(vert=360, hor=90) {
+function landmarkVis(vert=360, hor=360) {
     if (null === landmark.uuid) {
         alert("No landmark selected!");
     } else {
@@ -383,8 +407,8 @@ function landmarkVis(vert=360, hor=90) {
         var hitBuildings = [lm.uuid];
     
         lScore = 0;
-        for (i=0; i < hor; i+=15) {        // Horizontal angle
-            for (j=0; j < vert; j+=15) {      // Vertical angle
+        for (i=0; i < hor; i+=10) {        // Horizontal angle
+            for (j=0; j < vert; j+=10) {      // Vertical angle
                 var x = Math.sin(i*Math.PI/180) * Math.cos(j*Math.PI/180);
                 var y = Math.sin(i*Math.PI/180) * Math.sin(j*Math.PI/180);;
                 var z = Math.cos(i*Math.PI/180);
@@ -395,12 +419,12 @@ function landmarkVis(vert=360, hor=90) {
                 nRays += 1;
                 
                 var intersects = ray.intersectObjects(scene.children, true);
-
+                
                 // Increase lScore
-                if (1 < intersects.length) {
-                    var hit = intersects[1].object.parent;
-                    if ("building"=== hit.name && !(hitBuildings.includes(hit.uuid))) {
-                        var d = origin.distanceTo(hit.position);
+                if (0 < intersects.length) {
+                    var hit = intersects[0].object;
+                    if (("building"=== hit.name || "building"=== hit.name.parent) && !(hitBuildings.includes(hit.uuid))) {
+                        var d = origin.distanceTo(intersects[0].point);
                         hitBuildings.push(hit.uuid);
                         createLine(origin, direction, d);
                         lScore += 1;
@@ -444,30 +468,69 @@ var barSize={
     z: 10
 }
 
-function updateBars() {
-    for (i = 0; i<scene.children.length; i++) {
-        const j = i;
-        if ("bar" === scene.children[j].name) {
-            var height = findSkyVis(scene.children[j].position, false, false);
-            console.log(height);
+async function updateBars() {
+    scene.traverse(function(element){
+        if ("bar" === element.name) {
+            var height = findSkyVis(element.position, false, false, 45);
             if (.5 > height) {
                 height = .5;
             } else if (1 < height){
                 height = 1;
             }
-            scene.children[j].scale.y = height;
+            element.scale.y = height;
         }
-    }
+    });
 }
 
-function addBars(coord, height) {
+function addBars(coord) {
     bars.active = true;
-    height = barSize.y + barSize.y*height;
+    height = 2*barSize.y;
     var geometry = new THREE.BoxGeometry(barSize.x, height, barSize.z);
     geometry.applyMatrix( new THREE.Matrix4().makeTranslation(0, barSize.y, 0 ) );
-    var material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
+    var material = new THREE.MeshBasicMaterial( {color: 0x00ff00, opacity: 0.3} );
+    material.transparent = true;
     var cube = new THREE.Mesh( geometry, material );
     cube.name="bar";
     cube.position.set(coord.x, coord.y, coord.z);
     scene.add( cube );
+}
+
+function onResize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+}
+
+function loadEnvironment() {
+    var loader = new THREE.GLTFLoader();
+
+    loader.load(
+        'models/blender/stavanger.glb',
+        function(gltf) {
+            for (i in gltf.scene.children) {
+                if (/^[0-9]*$/.test(gltf.scene.children[i].name)) {
+                    gltf.scene.children[i].name = "building";
+                }
+            }
+            console.log(gltf);
+            scene.add(gltf.scene);
+
+            
+            
+            gltf.scene; // THREE.Group
+            gltf.scenes; // Array<THREE.Group>
+            gltf.asset; // Object
+        },
+        function ( xhr ) {
+
+            console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+    
+        },
+        // called when loading has errors
+        function ( error ) {
+    
+            console.log( 'An error happened' );
+    
+        }
+    );
 }

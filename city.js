@@ -138,14 +138,16 @@ function onDocumentMouseDown( event ) {
     event.preventDefault();
     var mouse_ray = new THREE.Raycaster();
 
-    mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-    mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-
-    if (NaN == mouse.x) {
+    if ("click" === event.type) {
+        mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+        mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+    } else {
         mouse.x = ( event.touches[0].pageX / window.innerWidth ) * 2 - 1;
         mouse.y = - ( event.touches[0].pageY / window.innerHeight ) * 2 + 1;
     }
-    alert("X: " + mouse.x + " Y: " + mouse.y);
+
+    console.log(event);
+    console.log(mouse);
     
     mouse_ray.setFromCamera( mouse, camera );
     

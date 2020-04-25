@@ -38,7 +38,7 @@ var bars = {
 
 //document.addEventListener('click', onDocumentMouseDown, false);
 renderer.domElement.addEventListener('click', onDocumentMouseDown, false);
-renderer.domElement.addEventListener('touchstart', onDocumentMouseDown, false);
+//renderer.domElement.addEventListener('touchstart', onDocumentMouseDown, false);
 window.addEventListener('resize', onResize, false);
 
 
@@ -135,6 +135,7 @@ var addBuilding = {
 };
 
 function onDocumentMouseDown( event ) {
+    alert("OFFF");
     event.preventDefault();
     var mouse_ray = new THREE.Raycaster();
 

@@ -37,6 +37,7 @@ var bars = {
 }
 
 document.addEventListener('mousedown', onDocumentMouseDown, false);
+document.addEventListener('touchstart', onDocumentMouseDown, false);
 window.addEventListener('resize', onResize, false);
 
 

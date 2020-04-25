@@ -38,7 +38,7 @@ var bars = {
 
 //document.addEventListener('mousedown', onDocumentMouseDown, false);
 renderer.domElement.addEventListener('click', onDocumentMouseDown, false);
-renderer.domElement.addEventListener('touchstart', onDocumentMouseDown, false);
+//renderer.domElement.addEventListener('touchstart', onDocumentMouseDown, false);
 window.addEventListener('resize', onResize, false);
 
 
@@ -140,6 +140,7 @@ function onDocumentMouseDown( event ) {
 
     mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
     mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+    alert("x: " + mouse.x + " y: " + mouse.y);
     
     mouse_ray.setFromCamera( mouse, camera );
     

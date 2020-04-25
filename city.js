@@ -140,7 +140,11 @@ function onDocumentMouseDown( event ) {
 
     mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
     mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-    alert("x: " + mouse.x + " y: " + mouse.y);
+
+    if (NaN == mouse.x) {
+        mouse.x = ( event.touches[0].pageX / window.innerWidth ) * 2 - 1;
+        mouse.y = - ( event.touches[0].pageY / window.innerHeight ) * 2 + 1;
+    }
     
     mouse_ray.setFromCamera( mouse, camera );
     

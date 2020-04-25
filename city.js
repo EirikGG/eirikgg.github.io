@@ -36,7 +36,8 @@ var bars = {
     add: false
 }
 
-document.addEventListener('click', onDocumentMouseDown, false);
+//document.addEventListener('click', onDocumentMouseDown, false);
+renderer.domElement.addEventListener('click', onDocumentMouseDown, false);
 window.addEventListener('resize', onResize, false);
 
 

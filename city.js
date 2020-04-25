@@ -36,7 +36,7 @@ var bars = {
     add: false
 }
 
-document.addEventListener('mousedown', onDocumentMouseDown);
+document.addEventListener('mousedown', onDocumentMouseDown, false);
 window.addEventListener('resize', onResize, false);
 
 

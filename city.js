@@ -38,6 +38,7 @@ var bars = {
 
 //document.addEventListener('click', onDocumentMouseDown, false);
 renderer.domElement.addEventListener('click', onDocumentMouseDown, false);
+renderer.domElement.addEventListener('touchstart', onDocumentMouseDown, false);
 window.addEventListener('resize', onResize, false);
 
 

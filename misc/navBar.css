@@ -62,7 +62,7 @@
 /* Dropdown container - needed to position the dropdown content */
 .dropdown {
   float: left;
-  overflow: hidden;
+  overflow: visible;
 }
 
 /* Style the dropdown button to fit inside the topnav */

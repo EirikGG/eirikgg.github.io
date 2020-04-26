@@ -18,11 +18,10 @@
 
     </head>
     <body onload="setup()">
-
         <div class="navbar">
+
             <div class="dropdown">
-                <div class="dropbtn">Scene
-                </div>
+                <div class="dropbtn">Scene</div>
                 <div class="dropdown-content">
                     <a onclick="javascript: newEnvironment('models/stavanger/stavanger.glb')">Stavanger</a>
                     <a onclick="javascript: newEnvironment('models/oslo/oslo.glb')">Oslo</a>
@@ -37,8 +36,7 @@
             </form> 
 
             <div class="dropdown">
-                <div id="cancelBuildingBtn" onclick="javascript: buildingCancel(); addBuildingPassive()" class="dropbtn"> Add building
-                </div>
+                <div id="cancelBuildingBtn" onclick="javascript: buildingCancel(); addBuildingPassive()" class="dropbtn"> Add building</div>
                 <div class="dropdown-content">
                     <a onclick="javascript: buildingFarmHouse(); addBuildingActive();">Farmhouse</a>
                     <a onclick="javascript: cityBuilding(); addBuildingActive();">City building 1</a>

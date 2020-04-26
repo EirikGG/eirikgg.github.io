@@ -543,8 +543,8 @@ function loadEnvironment(path) {
 
 function newEnvironment(path) {
     console.log(scene.children);
-    for (var i = 0; i < scene.children.length; i++) {
-        if ("Scene" === scene.children[i].name) {
+    for (var i = scene.children.length-1; i>=0; i--) {
+        if ("sun" !== scene.children[i].name && "AmbientLight" !== scene.children[i].type) {
             scene.remove(scene.children[i]);
         }
     }

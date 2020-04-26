@@ -383,7 +383,7 @@ function removeLine() {
 }
 
 function addSun() {
-    sun = new THREE.DirectionalLight('#FDFEFE', .5);
+    sun = new THREE.DirectionalLight('#FDFEFE', 1);
     sun.position.set(0.0, 700.0, 0.0);
     sun.lookAt(sceneCenter);
     sun.name = "sun";

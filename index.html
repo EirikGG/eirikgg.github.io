@@ -19,25 +19,33 @@
     </head>
     <body onload="setup()">
         <div class="navbar">
-
             <div class="dropdown">
                 <div class="dropbtn">Scene</div>
+                <div class="dropdown-content">
+                    
+                <a onclick="javascript: sceneSave();">Save scene</a>
+                <a id="loadScene">Load scene</a>
+                <form id='formid' method="POST" enctype="multipart/form-data"> 
+                    <input id='fileid' type='file' onchange="handleFile(event);" hidden/>
+                </form> 
+
+                <div class="dropbtn">Presets:</div>
                 <div class="dropdown-content">
                     <a onclick="javascript: newEnvironment('models/stavanger/stavanger.glb')">Stavanger</a>
                     <a onclick="javascript: newEnvironment('models/oslo/oslo.glb')">Oslo</a>
                     <a onclick="javascript: newEnvironment('models/matterhorn/matterhorn.glb')">Matterhorn</a>
                 </div>
+
+                </div>
             </div>
 
-            <a onclick="javascript: sceneSave();">Save scene</a>
-            <a id="loadScene">Load scene</a>
-            <form id='formid' method="POST" enctype="multipart/form-data"> 
-                <input id='fileid' type='file' onchange="handleFile(event);" hidden/>
-            </form> 
 
             <div class="dropdown">
-                <div id="cancelBuildingBtn" onclick="javascript: buildingCancel(); addBuildingPassive()" class="dropbtn"> Add building</div>
+                <div id="cancelBuildingBtn" onclick="javascript: buildingCancel(); addBuildingPassive()" class="dropbtn">Buildings</div>
                 <div class="dropdown-content">
+                    <a id="deleteBtn" onclick="javascript: buildingDelete(); doDeleteActive()">Delete</a>
+                    
+                    <div class="dropbtn">Presets:</div>
                     <a onclick="javascript: buildingFarmHouse(); addBuildingActive();">Farmhouse</a>
                     <a onclick="javascript: cityBuilding(); addBuildingActive();">City building 1</a>
                     <a onclick="javascript: cityBuilding2(); addBuildingActive();">City building 2</a>
@@ -45,20 +53,27 @@
                     <a onclick="javascript: cityBuilding4(); addBuildingActive();">City building 4</a>
                 </div>
             </div>
-            <a id="deleteBtn" onclick="javascript: buildingDelete(); doDeleteActive()">Delete building</a>
+
+            <div class="dropdown">
+                <div id="cancelBuildingBtn" onclick="javascript: buildingCancel(); addBuildingPassive()" class="dropbtn">Visability</div>
+                <div class="dropdown-content">
+                    <div class="dropbtn">Landmark:</div>
+                    <a id="landmark" onclick=" javascript: toggleLandmark(); handleLandmark();">Select</a>
+                    <a id="landvis" onclick=" javascript: landmarkVis();">Calculate visability</a>
+                    <a id="landvisClear" onclick=" javascript: removeLine();">Clear lines</a>
+                    
+                    <div class="dropbtn">Sky:</div>
+                    <a id="skyVis" onclick=" javascript: toggleSkyVis(); handleSkyVis();">Sky visability</a>
+                    <a id="landvisClear" onclick=" javascript: removeLine();">Clear lines</a>
+
+                    <div class="dropbtn">Bars:</div>
+                    <a id="addBars" onclick=" javascript: toggleBars(); handleBars();">Add</a>
+                    <a id="stopBars" onclick=" javascript: removeBars(); ">Remove</a>
+                </div>
+            </div>
 
             
-            <a id="landmark" onclick=" javascript: toggleLandmark(); handleLandmark();">Select landmark</a>
-
-            <a id="landvis" onclick=" javascript: landmarkVis();">Landmark visability</a>
-            
-            <a id="skyVis" onclick=" javascript: toggleSkyVis(); handleSkyVis();">Sky visability</a>
                   
-            <a id="landvisClear" onclick=" javascript: removeLine();">Clear lines</a>
-
-            <a id="addBars" onclick=" javascript: toggleBars(); handleBars();">Add bars</a>
-
-            <a id="stopBars" onclick=" javascript: removeBars(); ">Remove bars</a>
 
             
             <script>
@@ -68,14 +83,14 @@
                 }
                 function addBuildingPassive() {
                   var x = document.getElementById("cancelBuildingBtn");
-                  x.innerHTML = "Add building";
+                  x.innerHTML = "Buildings";
                 }
                 function doDeleteActive() {
                     var x = document.getElementById("deleteBtn");
-                    if("Delete building" === x.innerHTML) {
+                    if("Delete" === x.innerHTML) {
                         x.innerHTML = "Cancel";
                     } else {
-                        x.innerHTML = "Delete building";
+                        x.innerHTML = "Delete";
                     }
                 }
                 function setup() {
@@ -104,19 +119,19 @@
                 }
                 function handleLandmark() {
                     var x = document.getElementById("landmark");
-                    if("Select landmark" === x.innerHTML) {
+                    if("Select" === x.innerHTML) {
                         x.innerHTML = "Confirm";
                     } else {
-                        x.innerHTML = "Select landmark";
+                        x.innerHTML = "Select";
                         indicateLandmark();
                     }
                 }
                 function handleBars() {
                     var x = document.getElementById("addBars");
-                    if("Add bars" === x.innerHTML) {
+                    if("Add" === x.innerHTML) {
                         x.innerHTML = "Cancel";
                     } else {
-                        x.innerHTML = "Add bars";
+                        x.innerHTML = "Add";
                     }
                 }
                 </script>

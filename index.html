@@ -41,11 +41,11 @@
 
 
             <div class="dropdown">
-                <div id="cancelBuildingBtn" onclick="javascript: buildingCancel(); addBuildingPassive()" class="dropbtn">Buildings</div>
+                <div class="dropbtn">Buildings</div>
                 <div class="dropdown-content">
                     <a id="deleteBtn" onclick="javascript: buildingDelete(); doDeleteActive()">Delete</a>
                     
-                    <div class="dropbtn">Presets:</div>
+                    <div class="dropbtn" id="cancelBuildingBtn" onclick="javascript: buildingCancel(); addBuildingPassive()" >Presets:</div>
                     <a onclick="javascript: buildingFarmHouse(); addBuildingActive();">Farmhouse</a>
                     <a onclick="javascript: cityBuilding(); addBuildingActive();">City building 1</a>
                     <a onclick="javascript: cityBuilding2(); addBuildingActive();">City building 2</a>
@@ -55,7 +55,7 @@
             </div>
 
             <div class="dropdown">
-                <div id="cancelBuildingBtn" onclick="javascript: buildingCancel(); addBuildingPassive()" class="dropbtn">Visability</div>
+                <div class="dropbtn">Visability</div>
                 <div class="dropdown-content">
                     <div class="dropbtn">Landmark:</div>
                     <a id="landmark" onclick=" javascript: toggleLandmark(); handleLandmark();">Select</a>
@@ -83,7 +83,7 @@
                 }
                 function addBuildingPassive() {
                   var x = document.getElementById("cancelBuildingBtn");
-                  x.innerHTML = "Buildings";
+                  x.innerHTML = "Presets:";
                 }
                 function doDeleteActive() {
                     var x = document.getElementById("deleteBtn");

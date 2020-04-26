@@ -244,11 +244,7 @@ function cityBuilding4() {
 }
 
 function buildingCancel() {
-    if(addBuilding.active) {
-        addBuilding.active= false;
-    } else{
-        addBuilding.active= true;
-    }
+    addBuilding.active= false;
 }
 
 var deleteActive = false;

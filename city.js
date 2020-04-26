@@ -27,7 +27,7 @@ var phi = 45.0;      // Horizontal angle
 var theta = 45.0;    // Vertical angle
 addSun();
 
-loadEnvironment();
+loadEnvironment('models/blender/stavanger.glb');
 
 
 
@@ -511,11 +511,11 @@ function onResize() {
     renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
-function loadEnvironment() {
+function loadEnvironment(path) {
     var loader = new THREE.GLTFLoader();
 
     loader.load(
-        'models/blender/stavanger.glb',
+        path,
         function(gltf) {
             for (i in gltf.scene.children) {
                 if (/^[0-9]*$/.test(gltf.scene.children[i].name)) {
@@ -543,4 +543,15 @@ function loadEnvironment() {
     
         }
     );
+}
+
+function newEnvironment(path) {
+    console.log(scene.children);
+    for (var i = 0; i < scene.children.length; i++) {
+        if ("Scene" === scene.children[i].name) {
+            scene.remove(scene.children[i]);
+        }
+    }
+
+    loadEnvironment('models/blender/stavanger.glb');
 }

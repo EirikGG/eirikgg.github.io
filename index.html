@@ -20,6 +20,14 @@
     <body onload="setup()">
 
         <div class="navbar">
+            <div class="dropdown">
+                <div class="dropbtn">Scene
+                </div>
+                <div class="dropdown-content">
+                    <a onclick="javascript: newEnvironment('models/blender/stavanger.glb')">Stavanger</a>
+                </div>
+            </div>
+
             <a onclick="javascript: sceneSave();">Save scene</a>
             <a id="loadScene">Load scene</a>
             <form id='formid' method="POST" enctype="multipart/form-data"> 

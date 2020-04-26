@@ -1,7 +1,7 @@
 // Create scene and camera
 var scene = new THREE.Scene();
 var sceneCenter = new THREE.Vector3(0.0, 0.0, 0.0);
-var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 10000 );
+var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 50000 );
 camera.position.x = 500;
 camera.position.y = 500;
 camera.position.z = 500;
@@ -27,7 +27,7 @@ var phi = 45.0;      // Horizontal angle
 var theta = 45.0;    // Vertical angle
 addSun();
 
-loadEnvironment('models/blender/stavanger.glb');
+loadEnvironment('models/stavanger/stavanger.glb');
 
 
 
@@ -553,5 +553,5 @@ function newEnvironment(path) {
         }
     }
 
-    loadEnvironment('models/blender/stavanger.glb');
+    loadEnvironment(path);
 }

@@ -48,11 +48,11 @@
                     <a id="deleteBtn" onclick="javascript: buildingDelete(); doDeleteActive()">Delete</a>
                     
                     <div class="dropbtn" id="cancelBuildingBtn" onclick="javascript: buildingCancel(); addBuildingPassive()" >Presets:</div>
-                    <a onclick="javascript: buildingFarmHouse(); addBuildingActive();">Farmhouse</a>
-                    <a onclick="javascript: cityBuilding(); addBuildingActive();">City building 1</a>
-                    <a onclick="javascript: cityBuilding2(); addBuildingActive();">City building 2</a>
-                    <a onclick="javascript: cityBuilding3(); addBuildingActive();">City building 3</a>
-                    <a onclick="javascript: cityBuilding4(); addBuildingActive();">City building 4</a>
+                    <a onclick="javascript: addBuildingActive(); buildingFarmHouse();">Farmhouse</a>
+                    <a onclick="javascript: addBuildingActive(); cityBuilding();">City building 1</a>
+                    <a onclick="javascript: addBuildingActive(); cityBuilding2();">City building 2</a>
+                    <a onclick="javascript: addBuildingActive(); cityBuilding3();">City building 3</a>
+                    <a onclick="javascript: addBuildingActive(); cityBuilding4();">City building 4</a>
                 </div>
             </div>
 
@@ -80,6 +80,7 @@
             
             <script>
                 function addBuildingActive() {
+                  resetAll();
                   var x = document.getElementById("cancelBuildingBtn");
                   x.innerHTML = "Cancel";
                 }
@@ -90,6 +91,7 @@
                 function doDeleteActive() {
                     var x = document.getElementById("deleteBtn");
                     if("Delete" === x.innerHTML) {
+                        resetAll();
                         x.innerHTML = "Cancel";
                     } else {
                         x.innerHTML = "Delete";
@@ -142,7 +144,20 @@
                  * Resets all functions.
                  **/
                 function resetAll() {
+                    // Reset building
+                    var x = document.getElementById("cancelBuildingBtn");
+                    if ("Cancel" === x.innerHTML) {
+                        addBuildingPassive();
+                        buildingCancel();
+                    }
 
+
+                    // Reset delete
+                    var x = document.getElementById("deleteBtn");
+                    if("Cancel" === x.innerHTML) {
+                        buildingDelete();
+                        x.innerHTML = "Delete";
+                    }
                 }
 
                 </script>

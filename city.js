@@ -460,7 +460,7 @@ function toggleBars() {
 }
 function removeBars() {
     bars.active = false;
-    for (i = 0; i<scene.children.length; i++) {
+    for (i = scene.children.length-1; i>=0; i--) {
         const j = i;
         if ("bar" === scene.children[j].name) {
             scene.remove(scene.children[j]);

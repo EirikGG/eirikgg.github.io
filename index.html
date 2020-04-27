@@ -117,6 +117,7 @@
                 function handleSkyVis() {
                     var x = document.getElementById("skyVis");
                     if("Sky visability" === x.innerHTML) {
+                        resetAll();
                         x.innerHTML = "Cancel";
                     } else {
                         x.innerHTML = "Sky visability";
@@ -125,6 +126,7 @@
                 function handleLandmark() {
                     var x = document.getElementById("landmark");
                     if("Select" === x.innerHTML) {
+                        resetAll();
                         x.innerHTML = "Confirm";
                     } else {
                         x.innerHTML = "Select";
@@ -134,6 +136,7 @@
                 function handleBars() {
                     var x = document.getElementById("addBars");
                     if("Add" === x.innerHTML) {
+                        resetAll();
                         x.innerHTML = "Cancel";
                     } else {
                         x.innerHTML = "Add";
@@ -158,8 +161,31 @@
                         buildingDelete();
                         x.innerHTML = "Delete";
                     }
-                }
 
+
+                    // Select landmark
+                    var x = document.getElementById("landmark");
+                    if ("Confirm" === x.innerHTML) {
+                        x.innerHTML = "Select";
+                        indicateLandmark();
+                    }
+
+
+                    // Sky visability
+                    var x = document.getElementById("skyVis");
+                    if("Cancel" === x.innerHTML) {
+                        toggleSkyVis();
+                        x.innerHTML = "Sky visability";
+                    }
+
+
+                    // Bars
+                    var x = document.getElementById("addBars");
+                    if("Cancel" === x.innerHTML) {
+                        toggleBars();
+                        x.innerHTML = "Add";
+                    }
+                }
                 </script>
                     
 

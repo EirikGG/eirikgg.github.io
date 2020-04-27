@@ -1,5 +1,6 @@
 // Create scene and camera
 var scene = new THREE.Scene();
+scene.background = new THREE.Color( 0xcadfe3 );
 var sceneCenter = new THREE.Vector3(0.0, 0.0, 0.0);
 var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 50000 );
 camera.position.x = 500;

@@ -23,7 +23,7 @@
                 <div class="dropbtn">Scene</div>
                 <div class="dropdown-content">
                     
-                <a onclick="javascript: sceneSave();">Save scene</a>
+                <a onclick="javascript: resetAll(); sceneSave();">Save scene</a>
                 <a id="loadScene">Load scene</a>
                 <form id='formid' method="POST" enctype="multipart/form-data"> 
                     <input id='fileid' type='file' onchange="handleFile(event);" hidden/>
@@ -31,6 +31,7 @@
 
                 <div class="dropbtn">Presets:</div>
                 <div class="dropdown-content">
+                    <a onclick="javascript: newEnvironment('models/asperoya/asperoya.glb')">Asperøya</a>
                     <a onclick="javascript: newEnvironment('models/stavanger/stavanger.glb')">Stavanger</a>
                     <a onclick="javascript: newEnvironment('models/oslo/oslo.glb')">Oslo</a>
                     <a onclick="javascript: newEnvironment('models/matterhorn/matterhorn.glb')">Matterhorn</a>
@@ -100,6 +101,7 @@
                     }
                 }
                 function handleFile(event) {
+                    resetAll();
                     var file = document.getElementById("fileid").files[0];
                     if (file) {
                         var reader = new FileReader();
@@ -134,6 +136,14 @@
                         x.innerHTML = "Add";
                     }
                 }
+
+                /**
+                 * Resets all functions.
+                 **/
+                function resetAll() {
+
+                }
+
                 </script>
                     
 
